@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Grade } from '@/types/grade';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit2 } from 'lucide-react';
+import { Trash2, Edit2, CheckCircle2, Clock } from 'lucide-react';
 import { EditGradeDialog } from './EditGradeDialog';
+import { cn } from '@/lib/utils';
 
 interface GradeItemProps {
   grade: Grade;
@@ -20,13 +21,29 @@ export function GradeItem({ grade, onDelete, onUpdate }: GradeItemProps) {
 
   return (
     <>
-      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors">
+      <div className={cn(
+        "flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors border-l-4",
+        grade.isConfirmed
+          ? "bg-muted/50 border-green-500"
+          : "bg-muted/30 border-orange-400 opacity-70"
+      )}>
         <div className="flex-1">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold text-lg">{gradeDisplay}</span>
             <Badge variant="outline">Coeff. {grade.coefficient}</Badge>
             {grade.value.type === 'range' && (
               <Badge variant="secondary">Intervalle</Badge>
+            )}
+            {grade.isConfirmed ? (
+              <Badge variant="default" className="gap-1 bg-green-600 hover:bg-green-700">
+                <CheckCircle2 className="w-3 h-3" />
+                Définitive
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="gap-1 border-orange-400 text-orange-600">
+                <Clock className="w-3 h-3" />
+                En attente
+              </Badge>
             )}
           </div>
           <p className="text-sm text-muted-foreground mt-1">{grade.name}</p>

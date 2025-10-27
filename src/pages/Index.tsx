@@ -5,6 +5,7 @@ import { Plus, TrendingUp, TrendingDown, Award } from 'lucide-react';
 import { EUCard } from '@/components/EUCard';
 import { AddEUDialog } from '@/components/AddEUDialog';
 import { StatCard } from '@/components/StatCard';
+import { BurgerMenu } from '@/components/BurgerMenu';
 import { calculateGeneralAverage } from '@/lib/gradeCalculations';
 
 const STORAGE_KEY = 'grade-calculator-eus';
@@ -26,7 +27,8 @@ const Index = () => {
     const newEU: EU = {
       id: crypto.randomUUID(),
       ...euData,
-      subjects: []
+      subjects: [],
+      grades: []
     };
     setEus([...eus, newEU]);
     setShowAddEU(false);
@@ -40,9 +42,18 @@ const Index = () => {
     setEus(eus.filter(e => e.id !== euId));
   };
 
+  const handleImport = (importedEus: EU[]) => {
+    setEus(importedEus);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Top Bar */}
+        <div className="flex justify-end mb-4">
+          <BurgerMenu eus={eus} onImport={handleImport} />
+        </div>
+
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-primary via-primary-glow to-accent bg-clip-text text-transparent">
@@ -81,16 +92,18 @@ const Index = () => {
         )}
 
         {/* Add EU Button */}
-        <div className="mb-6">
-          <Button
-            onClick={() => setShowAddEU(true)}
-            size="lg"
-            className="gap-2 shadow-lg hover:shadow-xl transition-all"
-          >
-            <Plus className="w-5 h-5" />
-            Ajouter une EU
-          </Button>
-        </div>
+        {eus.length > 0 && (
+          <div className="mb-6">
+            <Button
+              onClick={() => setShowAddEU(true)}
+              size="lg"
+              className="gap-2 shadow-lg hover:shadow-xl transition-all"
+            >
+              <Plus className="w-5 h-5" />
+              Ajouter une EU
+            </Button>
+          </div>
+        )}
 
         {/* EUs List */}
         {eus.length === 0 ? (

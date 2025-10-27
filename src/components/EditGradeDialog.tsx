@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Grade } from '@/types/grade';
 
 interface EditGradeDialogProps {
@@ -26,32 +27,72 @@ export function EditGradeDialog({ open, onOpenChange, grade, onUpdate }: EditGra
     grade.value.type === 'range' ? grade.value.max.toString() : ''
   );
   const [coefficient, setCoefficient] = useState(grade.coefficient.toString());
+  const [isConfirmed, setIsConfirmed] = useState(grade.isConfirmed || false);
 
   useEffect(() => {
     setName(grade.name);
     setType(grade.value.type);
     setCoefficient(grade.coefficient.toString());
-    
+    setIsConfirmed(grade.isConfirmed || false);
+
     if (grade.value.type === 'exact') {
       setExactValue(grade.value.value.toString());
+      setMinValue('');
+      setMaxValue('');
     } else {
       setMinValue(grade.value.min.toString());
       setMaxValue(grade.value.max.toString());
+      setExactValue('');
     }
   }, [grade]);
+
+  // Handle type change to reset values
+  useEffect(() => {
+    if (type === 'exact') {
+      setMinValue('');
+      setMaxValue('');
+    } else {
+      setExactValue('');
+    }
+  }, [type]);
 
   const handleSubmit = () => {
     if (!name || !coefficient) return;
 
-    const gradeValue = type === 'exact'
-      ? { type: 'exact' as const, value: parseFloat(exactValue) || 0 }
-      : { type: 'range' as const, min: parseFloat(minValue) || 0, max: parseFloat(maxValue) || 0 };
+    const coeffValue = parseFloat(coefficient);
+    if (isNaN(coeffValue) || coeffValue <= 0) {
+      alert('Le coefficient doit être un nombre strictement positif');
+      return;
+    }
+
+    let gradeValue;
+    if (type === 'exact') {
+      const exactVal = parseFloat(exactValue);
+      if (isNaN(exactVal) || exactValue === '') {
+        alert('Veuillez saisir une note valide');
+        return;
+      }
+      gradeValue = { type: 'exact' as const, value: exactVal };
+    } else {
+      const minVal = parseFloat(minValue);
+      const maxVal = parseFloat(maxValue);
+      if (isNaN(minVal) || minValue === '' || isNaN(maxVal) || maxValue === '') {
+        alert('Veuillez saisir des notes minimale et maximale valides');
+        return;
+      }
+      if (minVal > maxVal) {
+        alert('La note minimale ne peut pas être supérieure à la note maximale');
+        return;
+      }
+      gradeValue = { type: 'range' as const, min: minVal, max: maxVal };
+    }
 
     onUpdate({
       ...grade,
       name,
       value: gradeValue,
-      coefficient: parseFloat(coefficient) || 1
+      coefficient: coeffValue,
+      isConfirmed
     });
   };
 
@@ -143,6 +184,20 @@ export function EditGradeDialog({ open, onOpenChange, grade, onUpdate }: EditGra
               onChange={(e) => setCoefficient(e.target.value)}
               placeholder="1"
             />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="confirmed"
+              checked={isConfirmed}
+              onCheckedChange={(checked) => setIsConfirmed(checked as boolean)}
+            />
+            <Label
+              htmlFor="confirmed"
+              className="text-sm font-normal cursor-pointer"
+            >
+              Note définitive (validée et confirmée)
+            </Label>
           </div>
         </div>
 
