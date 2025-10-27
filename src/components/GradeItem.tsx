@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { Grade } from '@/types/grade';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit2, Calendar } from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { Trash2, Edit2 } from 'lucide-react';
 import { EditGradeDialog } from './EditGradeDialog';
 
 interface GradeItemProps {
@@ -31,15 +29,7 @@ export function GradeItem({ grade, onDelete, onUpdate }: GradeItemProps) {
               <Badge variant="secondary">Intervalle</Badge>
             )}
           </div>
-          <div className="flex items-center gap-2 mt-1">
-            <p className="text-sm text-muted-foreground">{grade.name}</p>
-            {grade.date && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar className="w-3 h-3" />
-                {format(new Date(grade.date), 'dd MMM yyyy', { locale: fr })}
-              </div>
-            )}
-          </div>
+          <p className="text-sm text-muted-foreground mt-1">{grade.name}</p>
         </div>
         <div className="flex gap-1">
           <Button

@@ -7,7 +7,6 @@ export interface Grade {
   value: GradeValue;
   coefficient: number;
   name: string;
-  date?: string;
 }
 
 export interface Subject {
@@ -16,6 +15,14 @@ export interface Subject {
   coefficient: number;
   color: string;
   grades: Grade[];
+}
+
+export interface EU {
+  id: string;
+  name: string;
+  coefficient: number;
+  color: string;
+  subjects: Subject[];
 }
 
 export interface GradeStats {

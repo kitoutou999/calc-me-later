@@ -4,12 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
 
 interface AddGradeDialogProps {
   open: boolean;
@@ -24,7 +18,6 @@ export function AddGradeDialog({ open, onOpenChange, onAdd }: AddGradeDialogProp
   const [minValue, setMinValue] = useState('');
   const [maxValue, setMaxValue] = useState('');
   const [coefficient, setCoefficient] = useState('1');
-  const [date, setDate] = useState<Date>();
 
   const handleSubmit = () => {
     if (!name || !coefficient) return;
@@ -36,8 +29,7 @@ export function AddGradeDialog({ open, onOpenChange, onAdd }: AddGradeDialogProp
     onAdd({
       name,
       value: gradeValue,
-      coefficient: parseFloat(coefficient) || 1,
-      date: date?.toISOString()
+      coefficient: parseFloat(coefficient) || 1
     });
 
     // Reset form
@@ -47,7 +39,6 @@ export function AddGradeDialog({ open, onOpenChange, onAdd }: AddGradeDialogProp
     setMinValue('');
     setMaxValue('');
     setCoefficient('1');
-    setDate(undefined);
   };
 
   return (
@@ -138,33 +129,6 @@ export function AddGradeDialog({ open, onOpenChange, onAdd }: AddGradeDialogProp
               onChange={(e) => setCoefficient(e.target.value)}
               placeholder="1"
             />
-          </div>
-
-          <div>
-            <Label>Date (optionnelle)</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "dd MMMM yyyy", { locale: fr }) : "Choisir une date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
           </div>
         </div>
 

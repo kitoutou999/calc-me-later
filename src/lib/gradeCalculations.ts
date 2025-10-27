@@ -1,4 +1,5 @@
-import { Subject, GradeStats, Grade } from '@/types/grade';
+import { Subject, GradeStats, EU } from '@/types/grade';
+import { calculateEUAverage } from './euCalculations';
 
 export function calculateSubjectAverage(subject: Subject): GradeStats {
   if (subject.grades.length === 0) {
@@ -34,8 +35,8 @@ export function calculateSubjectAverage(subject: Subject): GradeStats {
   };
 }
 
-export function calculateGeneralAverage(subjects: Subject[]): GradeStats {
-  if (subjects.length === 0) {
+export function calculateGeneralAverage(eus: EU[]): GradeStats {
+  if (eus.length === 0) {
     return { current: 0, min: 0, max: 0, total: 0 };
   }
 
@@ -44,14 +45,14 @@ export function calculateGeneralAverage(subjects: Subject[]): GradeStats {
   let maxSum = 0;
   let totalCoeff = 0;
 
-  subjects.forEach((subject) => {
-    const subjectStats = calculateSubjectAverage(subject);
+  eus.forEach((eu) => {
+    const euStats = calculateEUAverage(eu);
     
-    if (subjectStats.total > 0) {
-      totalCoeff += subject.coefficient;
-      currentSum += subjectStats.current * subject.coefficient;
-      minSum += subjectStats.min * subject.coefficient;
-      maxSum += subjectStats.max * subject.coefficient;
+    if (euStats.total > 0) {
+      totalCoeff += eu.coefficient;
+      currentSum += euStats.current * eu.coefficient;
+      minSum += euStats.min * eu.coefficient;
+      maxSum += euStats.max * eu.coefficient;
     }
   });
 
@@ -62,6 +63,8 @@ export function calculateGeneralAverage(subjects: Subject[]): GradeStats {
     total: totalCoeff
   };
 }
+
+export { calculateEUAverage } from './euCalculations';
 
 export function getGradeColor(average: number): string {
   if (average >= 16) return 'text-accent';

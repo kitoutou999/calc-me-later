@@ -1,43 +1,43 @@
 import { useState, useEffect } from 'react';
-import { Subject } from '@/types/grade';
+import { EU } from '@/types/grade';
 import { Button } from '@/components/ui/button';
 import { Plus, TrendingUp, TrendingDown, Award } from 'lucide-react';
-import { SubjectCard } from '@/components/SubjectCard';
-import { AddSubjectDialog } from '@/components/AddSubjectDialog';
+import { EUCard } from '@/components/EUCard';
+import { AddEUDialog } from '@/components/AddEUDialog';
 import { StatCard } from '@/components/StatCard';
 import { calculateGeneralAverage } from '@/lib/gradeCalculations';
 
-const STORAGE_KEY = 'grade-calculator-subjects';
+const STORAGE_KEY = 'grade-calculator-eus';
 
 const Index = () => {
-  const [subjects, setSubjects] = useState<Subject[]>(() => {
+  const [eus, setEus] = useState<EU[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   });
-  const [showAddSubject, setShowAddSubject] = useState(false);
+  const [showAddEU, setShowAddEU] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(subjects));
-  }, [subjects]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(eus));
+  }, [eus]);
 
-  const generalStats = calculateGeneralAverage(subjects);
+  const generalStats = calculateGeneralAverage(eus);
 
-  const handleAddSubject = (subjectData: { name: string; coefficient: number; color: string }) => {
-    const newSubject: Subject = {
+  const handleAddEU = (euData: { name: string; coefficient: number; color: string }) => {
+    const newEU: EU = {
       id: crypto.randomUUID(),
-      ...subjectData,
-      grades: []
+      ...euData,
+      subjects: []
     };
-    setSubjects([...subjects, newSubject]);
-    setShowAddSubject(false);
+    setEus([...eus, newEU]);
+    setShowAddEU(false);
   };
 
-  const handleUpdateSubject = (updatedSubject: Subject) => {
-    setSubjects(subjects.map(s => s.id === updatedSubject.id ? updatedSubject : s));
+  const handleUpdateEU = (updatedEU: EU) => {
+    setEus(eus.map(e => e.id === updatedEU.id ? updatedEU : e));
   };
 
-  const handleDeleteSubject = (subjectId: string) => {
-    setSubjects(subjects.filter(s => s.id !== subjectId));
+  const handleDeleteEU = (euId: string) => {
+    setEus(eus.filter(e => e.id !== euId));
   };
 
   return (
@@ -54,7 +54,7 @@ const Index = () => {
         </div>
 
         {/* Stats Dashboard */}
-        {subjects.length > 0 && (
+        {eus.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <StatCard
               title="Moyenne Minimale"
@@ -80,51 +80,51 @@ const Index = () => {
           </div>
         )}
 
-        {/* Add Subject Button */}
+        {/* Add EU Button */}
         <div className="mb-6">
           <Button
-            onClick={() => setShowAddSubject(true)}
+            onClick={() => setShowAddEU(true)}
             size="lg"
             className="gap-2 shadow-lg hover:shadow-xl transition-all"
           >
             <Plus className="w-5 h-5" />
-            Ajouter une matière
+            Ajouter une EU
           </Button>
         </div>
 
-        {/* Subjects List */}
-        {subjects.length === 0 ? (
+        {/* EUs List */}
+        {eus.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
               <Award className="w-12 h-12 text-primary" />
             </div>
-            <h2 className="text-2xl font-semibold mb-2">Commencez par ajouter une matière</h2>
+            <h2 className="text-2xl font-semibold mb-2">Commencez par créer une Unité d'Enseignement</h2>
             <p className="text-muted-foreground mb-6">
-              Créez vos matières avec leurs coefficients, puis ajoutez vos notes
+              Une EU peut contenir une ou plusieurs matières avec leurs notes
             </p>
-            <Button onClick={() => setShowAddSubject(true)} size="lg" className="gap-2">
+            <Button onClick={() => setShowAddEU(true)} size="lg" className="gap-2">
               <Plus className="w-5 h-5" />
-              Créer ma première matière
+              Créer ma première EU
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {subjects.map((subject) => (
-              <SubjectCard
-                key={subject.id}
-                subject={subject}
-                onUpdateSubject={handleUpdateSubject}
-                onDeleteSubject={() => handleDeleteSubject(subject.id)}
+          <div className="space-y-6">
+            {eus.map((eu) => (
+              <EUCard
+                key={eu.id}
+                eu={eu}
+                onUpdateEU={handleUpdateEU}
+                onDeleteEU={() => handleDeleteEU(eu.id)}
               />
             ))}
           </div>
         )}
       </div>
 
-      <AddSubjectDialog
-        open={showAddSubject}
-        onOpenChange={setShowAddSubject}
-        onAdd={handleAddSubject}
+      <AddEUDialog
+        open={showAddEU}
+        onOpenChange={setShowAddEU}
+        onAdd={handleAddEU}
       />
     </div>
   );

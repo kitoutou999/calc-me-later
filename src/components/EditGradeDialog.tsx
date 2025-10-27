@@ -4,12 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
 import { Grade } from '@/types/grade';
 
 interface EditGradeDialogProps {
@@ -32,15 +26,11 @@ export function EditGradeDialog({ open, onOpenChange, grade, onUpdate }: EditGra
     grade.value.type === 'range' ? grade.value.max.toString() : ''
   );
   const [coefficient, setCoefficient] = useState(grade.coefficient.toString());
-  const [date, setDate] = useState<Date | undefined>(
-    grade.date ? new Date(grade.date) : undefined
-  );
 
   useEffect(() => {
     setName(grade.name);
     setType(grade.value.type);
     setCoefficient(grade.coefficient.toString());
-    setDate(grade.date ? new Date(grade.date) : undefined);
     
     if (grade.value.type === 'exact') {
       setExactValue(grade.value.value.toString());
@@ -61,8 +51,7 @@ export function EditGradeDialog({ open, onOpenChange, grade, onUpdate }: EditGra
       ...grade,
       name,
       value: gradeValue,
-      coefficient: parseFloat(coefficient) || 1,
-      date: date?.toISOString()
+      coefficient: parseFloat(coefficient) || 1
     });
   };
 
@@ -154,33 +143,6 @@ export function EditGradeDialog({ open, onOpenChange, grade, onUpdate }: EditGra
               onChange={(e) => setCoefficient(e.target.value)}
               placeholder="1"
             />
-          </div>
-
-          <div>
-            <Label>Date (optionnelle)</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "dd MMMM yyyy", { locale: fr }) : "Choisir une date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
           </div>
         </div>
 
